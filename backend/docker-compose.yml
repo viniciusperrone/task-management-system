@@ -10,3 +10,31 @@ services:
       - .:/app
     environment:
       - DEBUG=1
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15
+    container_name: orizon-db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      POSTGRES_USER: orizon
+      POSTGRES_PASSWORD: orizon
+      POSTGRES_DB: orizon
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: orizon-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@orizon.com
+      PGADMIN_DEFAULT_PASSWORD: orizon@2026
+    depends_on:
+      - db
+
+volumes:
+  postgres_data:
