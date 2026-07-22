@@ -101,3 +101,68 @@ class Ticket(BaseModel):
 
     def __str__(self):
         return f"{self.formatted_number} - {self.title}"
+
+
+class TicketColumnTransition(BaseModel):
+    ticket = models.ForeignKey(
+        "tickets.Ticket",
+        on_delete=models.CASCADE,
+        related_name="transitions",
+        verbose_name="Ticket"
+    )
+    from_column = models.ForeignKey(
+        "tickets.Column",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="transitions_from",
+        verbose_name="Coluna de Origem"
+    )
+    to_column = models.ForeignKey(
+        "tickets.Column",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+        related_name="transitions_to",
+        verbose_name="Coluna Destino"
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        verbose_name="Autor de Transição"
+    )
+    info = models.TextField(blank=True, default="", verbose_name="Informações Adicionais")
+
+    class Meta:
+        ordering = ["-created_at"]
+        verbose_name = "Transição de Ticket"
+        verbose_name_plural = "Transições de Ticket"
+
+    def __str__(self):
+        author_name = self.author.username if self.author else "Sistema"
+        from_name = self.from_column.name if self.from_column else "Sem Coluna"
+
+        return f"Ticket #{self.ticket.number:04d}: {from_name} -> {self.to_column.name} por {author_name}"
+
+    @classmethod
+    def execute_transition(cls, ticket, to_column, author=None, info=""):
+        if ticket.column_id == to_column.id:
+            return None
+
+        from_column = ticket.column
+
+        with transaction.atomic():
+            transition_obj = cls.objects.create(
+                ticket=ticket,
+                from_column=from_column,
+                to_column=to_column,
+                author=author,
+                info=info,
+            )
+
+            ticket.column = to_column
+            ticket.save(update_fields=["column", "updated_at"])
+
+        return transition_obj
