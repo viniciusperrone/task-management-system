@@ -5,13 +5,22 @@ from tickets.models import Board, Column, Ticket
 
 @admin.register(Ticket)
 class TicketAdmin(admin.ModelAdmin):
-    list_display = ('formatted_number', 'title', 'priority', 'owner', 'due_date', 'updated_at')
-    list_filter = ('priority', 'owner', 'created_at')
+    list_display = (
+        'formatted_number',
+        'title',
+        'column_board',
+        'column',
+        'priority',
+        'owner',
+        'due_date',
+        'updated_at'
+    )
+    list_filter = ('column__board', 'column', 'priority', 'owner', 'created_at')
     search_fields = ('title', 'description', 'owner__username', 'owner__email')
-    autocomplete_fields = ('owner', 'shared_users')
+    autocomplete_fields = ('column', 'owner', 'shared_users')
     filter_horizontal = ('shared_users',)
     readonly_fields = ('number', 'created_at', 'updated_at')
-    ordering = ('-updated_at',)
+    ordering = ('-priority', 'due_date', 'created_at')
 
     fieldsets = (
         (
@@ -36,6 +45,15 @@ class TicketAdmin(admin.ModelAdmin):
             },
         ),
         (
+            "Kanban",
+            {
+                "fields": (
+                    "column",
+                    "position",
+                )
+            },
+        ),
+        (
             "Metadata",
             {
                 "classes": ("collapse",),
@@ -46,6 +64,10 @@ class TicketAdmin(admin.ModelAdmin):
             },
         ),
     )
+
+    @admin.display(description="Board")
+    def column_board(self, obj):
+        return obj.column.board.name if obj.column else "-"
 
 class ColumnInline(admin.TabularInline):
     model = Column
