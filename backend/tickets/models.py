@@ -57,6 +57,17 @@ class Ticket(BaseModel):
     priority = models.IntegerField(choices=Priority, default=Priority.MEDIUM, verbose_name="Prioridade")
     due_date = models.DateField(verbose_name="Data de vencimento", null=True, blank=True, db_index=True)
     number = models.PositiveIntegerField(unique=True, db_index=True, editable=False, verbose_name="Número")
+
+    column = models.ForeignKey(
+        "tickets.Column",
+        on_delete=models.CASCADE,
+        related_name="tickets",
+        verbose_name="Coluna",
+        null=True,
+        blank=True,
+    )
+    position = models.PositiveIntegerField(default=0, db_index=True, verbose_name="Posição na coluna")
+
     owner = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
@@ -84,7 +95,9 @@ class Ticket(BaseModel):
         super().save(*args, **kwargs)
 
     class Meta:
-        ordering = ["-updated_at"]
+        ordering = ["-priority", "due_date", "created_at"]
+        verbose_name = "Ticket"
+        verbose_name_plural = "Tickets"
 
     def __str__(self):
         return f"{self.formatted_number} - {self.title}"
