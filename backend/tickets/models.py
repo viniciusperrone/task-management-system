@@ -42,6 +42,14 @@ class Column(BaseModel):
         related_name="columns",
     )
 
+    class Meta:
+        ordering = ["board", "position"]
+        verbose_name = "Coluna"
+        verbose_name_plural = "Colunas"
+
+    def __str__(self):
+        return f"{self.board.name} -> {self.name}"
+
 
 class Ticket(BaseModel):
     title = models.CharField(max_length=255, verbose_name="Título")
