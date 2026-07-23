@@ -1,6 +1,27 @@
 from rest_framework import serializers
-from tickets.models import Column, Board, Ticket
+from tickets.models import Column, Board, Ticket, TicketColumnTransition
 
+
+class TicketColumnTransitionSerializer(serializers.ModelSerializer):
+    author_username = serializers.CharField(source='author.username', read_only=True, default="Sistema")
+    from_column_name = serializers.CharField(source='from_column.name', read_only=True, default=None)
+    to_column_name = serializers.CharField(source='to_column.name', read_only=True, default=None)
+
+    class Meta:
+        model = TicketColumnTransition
+        fields = [
+            'id',
+            'ticket',
+            'from_column',
+            'from_column_name',
+            'to_column',
+            'to_column_name',
+            'author',
+            'author_username',
+            'info',
+            'created_at',
+        ]
+        read_only_fields = ['created_at', 'updated_at']
 
 class TicketSerializer(serializers.ModelSerializer):
     formatted_number = serializers.CharField(read_only=True)
