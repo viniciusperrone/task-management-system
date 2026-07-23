@@ -6,6 +6,7 @@ from tickets.serializers import (
 )
 
 
+
 class ColumnViewSet():
     permission_classes = [IsAuthenticated]
     serializer_class = ColumnSerializer
