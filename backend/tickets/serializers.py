@@ -21,7 +21,7 @@ class TicketColumnTransitionSerializer(serializers.ModelSerializer):
             'info',
             'created_at',
         ]
-        read_only_fields = ['created_at', 'updated_at']
+        read_only_fields = fields
 
 class TicketSerializer(serializers.ModelSerializer):
     formatted_number = serializers.CharField(read_only=True)
