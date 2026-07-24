@@ -7,7 +7,7 @@ from rest_framework.response import Response
 from tickets.models import Column, Board, Ticket, TicketColumnTransition
 from tickets.serializers import (
     ColumnSerializer,
-    BoardSerializer, TicketSerializer,
+    BoardSerializer, TicketSerializer, TicketColumnTransitionSerializer,
 )
 
 
@@ -76,3 +76,11 @@ class TicketViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_200_OK,
         )
+
+    @action(detail=True, methods=['get'], url_path="transitions")
+    def list_transitions(self, request, pk=None):
+        ticket = self.get_object()
+        transitions = ticket.transitions.select_related('from_column', 'to_column', 'author').all()
+        serializer = TicketColumnTransitionSerializer(transitions, many=True)
+
+        return Response(serializer.data)
