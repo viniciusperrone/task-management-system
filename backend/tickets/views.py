@@ -16,7 +16,7 @@ class BoardViewSet(viewsets.ModelViewSet):
     serializer_class = BoardSerializer
 
     def get_queryset(self):
-        return Board.objects.filter(owner=self.request.user).prefetch_related('columns')
+        return Board.objects.filter(owner=self.request.user).prefetch_related('columns__tickets')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
@@ -28,6 +28,7 @@ class ColumnViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Column.objects.filter(board__owner=self.request.user)
+
 
 class TicketViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]

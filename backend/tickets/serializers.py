@@ -49,10 +49,11 @@ class TicketSerializer(serializers.ModelSerializer):
 
 
 class ColumnSerializer(serializers.ModelSerializer):
+    tickets = TicketSerializer(many=True, read_only=True)
 
     class Meta:
         model = Column
-        fields = ['id', 'name', 'position', 'color', 'board', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'position', 'color', 'board', 'tickets', 'created_at', 'updated_at']
         read_only_fields = ['created_at', 'updated_at']
 
 
