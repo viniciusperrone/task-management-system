@@ -1,9 +1,11 @@
-from rest_framework import status, viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, viewsets, filters
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from tickets.models import Column, Board, Ticket, TicketColumnTransition
+from tickets.filters import TicketFilter
 from tickets.serializers import (
     ColumnSerializer,
     BoardSerializer,
@@ -36,8 +38,21 @@ class TicketViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
     serializer_class = TicketSerializer
 
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    filterset_class = TicketFilter
+    search_fields = ['title', 'description', 'number']
+    ordering_fields = ['priority', 'due_date', 'created_at', 'position']
+    ordering = ['-priority', 'created_at']
+
     def get_queryset(self):
-        return Ticket.objects.filter(owner=self.request.user).select_related('column')
+        return (
+            Ticket.objects.filter(owner=self.request.user)
+            | Ticket.objects.filter(shared_users=self.request.user)
+        ).distinct().select_related('column', 'owner')
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
