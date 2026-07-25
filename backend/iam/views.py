@@ -1,8 +1,11 @@
-from rest_framework import status, permissions
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import status, permissions, generics, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from iam.filters import UserFilter
+from iam.models import User
 from iam.serializers import RegisterSerializer, LoginSerializer, UserResponseSerializer
 
 
@@ -48,3 +51,18 @@ class LoginView(APIView):
             }, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserListView(generics.ListAPIView):
+    permissions_classes = [permissions.IsAuthenticated]
+    serializer_class = UserResponseSerializer
+    queryset = User.objects.all().order_by("first_name", "username")
+
+    filter_backends = [
+        DjangoFilterBackend,
+        filters.SearchFilter,
+        filters.OrderingFilter,
+    ]
+    filterset_class = UserFilter
+    search_fields = ['username', 'email', 'first_name', 'last_name', 'nickname']
+    ordering_fields = ['username', 'email', 'created_at']
