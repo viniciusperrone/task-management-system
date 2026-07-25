@@ -1,4 +1,3 @@
-from django.db.models import Model
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
@@ -7,7 +6,10 @@ from rest_framework.response import Response
 from tickets.models import Column, Board, Ticket, TicketColumnTransition
 from tickets.serializers import (
     ColumnSerializer,
-    BoardSerializer, TicketSerializer, TicketColumnTransitionSerializer,
+    BoardSerializer,
+    TicketSerializer,
+    TicketColumnTransitionSerializer,
+    TicketShareSerializer
 )
 
 
@@ -39,6 +41,34 @@ class TicketViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)
+
+    @action(detail=True, methods=['post'], url_path="share")
+    def share_ticket(self, request, pk=None):
+        ticket = self.get_object()
+
+        if ticket.owner != request.user:
+            return Response(
+                {"error": "Apenas o criador do ticket pode gerenciar o acesso."},
+                status=status.HTTP_403_FORBIDDEN,
+            )
+
+        serializer = TicketShareSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        user_ids = serializer.validated_data["user_ids"]
+
+        if ticket.owner.id in user_ids:
+            user_ids.remove(ticket.owner.id)
+
+        return Response(
+            {
+                "message": "Permissões de acesso atualizadas com sucesso.",
+                "shared_users": list(
+                    ticket.shared_users.values("id", "username", "email")
+                ),
+            },
+            status=status.HTTP_200_OK,
+        )
 
     @action(detail=True, methods=['post'], url_path="move")
     def move_column(self, request, pk=None):

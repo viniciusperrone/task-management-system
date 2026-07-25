@@ -1,5 +1,7 @@
 from rest_framework import serializers
+
 from tickets.models import Column, Board, Ticket, TicketColumnTransition
+from iam.models import User
 
 
 class TicketColumnTransitionSerializer(serializers.ModelSerializer):
@@ -22,6 +24,28 @@ class TicketColumnTransitionSerializer(serializers.ModelSerializer):
             'created_at',
         ]
         read_only_fields = fields
+
+
+class TicketShareSerializer(serializers.Serializer):
+    user_ids = serializers.ListField(
+        child=serializers.IntegerField(),
+        allow_empty=True,
+        help_text="Lista de IDs dos usuários que terão acesso ao ticket."
+    )
+
+    def validate_user_ids(self, value):
+        existing_ids = set(
+            User.objects.filter(id__in=value).values_list("id", flat=True)
+        )
+        invalid_ids = set(value) - existing_ids
+
+        if invalid_ids:
+            raise serializers.ValidationError(
+                f"Usuários com os IDs {list(invalid_ids)} não foram encontrados."
+            )
+
+        return value
+
 
 class TicketSerializer(serializers.ModelSerializer):
     formatted_number = serializers.CharField(read_only=True)
