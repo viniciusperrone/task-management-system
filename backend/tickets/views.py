@@ -42,7 +42,7 @@ class TicketViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=['post'], url_path="move")
     def move_column(self, request, pk=None):
         ticket = self.get_object()
-        to_column_id = request.date.get("to_column_id")
+        to_column_id = request.data.get("to_column_id")
         info = request.data.get("info", "")
 
         if not to_column_id:
