@@ -6,7 +6,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from iam.filters import UserFilter
 from iam.models import User
-from iam.serializers import RegisterSerializer, LoginSerializer, UserResponseSerializer
+from iam.serializers import RegisterSerializer, LoginSerializer, UserProfileUpdateSerializer, UserResponseSerializer
 
 
 class RegisterView(APIView):
@@ -51,6 +51,14 @@ class LoginView(APIView):
             }, status=status.HTTP_200_OK)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class UserMeView(generics.RetrieveUpdateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+    serializer_class = UserProfileUpdateSerializer
+
+    def get_object(self):
+        return self.request.user
 
 
 class UserListView(generics.ListAPIView):
