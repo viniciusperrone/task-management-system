@@ -30,3 +30,5 @@ jobs:
             docker compose up -d --build
 
             docker compose exec -T web python manage.py collectstatic --noinput
+            
+            docker compose exec -T web pytest .
