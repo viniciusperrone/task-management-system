@@ -55,3 +55,27 @@ class TestLoginView:
         response = api_client.post(self.url, login_payload, format="json")
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
+
+@pytest.mark.django_db
+class TestUserMeView:
+    url = reverse("user_me")
+
+    def test_get_me_unauthenticated_fails(self, api_client):
+        response = api_client.get(self.url)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_get_me_authenticated_success(self, auth_client, user):
+        response = auth_client.get(self.url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["id"] == user.id
+        assert response.data["email"] == user.email
+
+    def test_update_me_nickname_success(self, auth_client, user):
+        payload = {"nickname": "NovoNick"}
+        response = auth_client.patch(self.url, payload, format="json")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert response.data["nickname"] == "NovoNick"
+        user.refresh_from_db()
+        assert user.nickname == "NovoNick"
