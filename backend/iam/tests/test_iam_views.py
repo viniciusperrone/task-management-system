@@ -72,10 +72,10 @@ class TestUserMeView:
         assert response.data["email"] == user.email
 
     def test_update_me_nickname_success(self, auth_client, user):
-        payload = {"nickname": "NovoNick"}
+        payload = {"nickname": "new_nick"}
         response = auth_client.patch(self.url, payload, format="json")
 
         assert response.status_code == status.HTTP_200_OK
-        assert response.data["nickname"] == "NovoNick"
+        assert response.data["nickname"] == "new_nick"
         user.refresh_from_db()
-        assert user.nickname == "NovoNick"
+        assert user.nickname == "new_nick"
