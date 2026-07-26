@@ -15,15 +15,22 @@ jobs:
     steps:
       - name: Deploy Django Backend
         uses: appleboy/ssh-action@v1.0.3
+
         with:
           host: ${{ secrets.EC2_HOST }}
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
+          debug: true
 
           script: |
+            whoami
+            pwd
+
             cd ~/task-management-system/backend
 
             git pull origin main
+
+            docker compose ps
 
             docker compose up -d --build
 
