@@ -15,6 +15,7 @@ def user_data():
         "username": "joao.silva",
         "email": "joao@orizon.com",
         "password": "Password123!",
+        "password_confirm": "Password123!",
         "first_name": "João",
         "last_name": "Silva",
         "nickname": "Jota"
@@ -22,6 +23,8 @@ def user_data():
 
 @pytest.fixture
 def user(db, user_data):
+    user_data.pop("password_confirm")
+
     return User.objects.create_user(**user_data)
 
 @pytest.fixture
