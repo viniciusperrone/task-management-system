@@ -21,19 +21,16 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
-    environment:
-      POSTGRES_USER: orizon
-      POSTGRES_PASSWORD: orizon
-      POSTGRES_DB: orizon
+    env_file:
+      - .env.local
 
   pgadmin:
     image: dpage/pgadmin4
     container_name: orizon-pgadmin
     ports:
       - "5050:80"
-    environment:
-      PGADMIN_DEFAULT_EMAIL: admin@orizon.com
-      PGADMIN_DEFAULT_PASSWORD: orizon@2026
+    env_file:
+      - .env.local
     depends_on:
       - db
 

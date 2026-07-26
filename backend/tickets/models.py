@@ -103,6 +103,39 @@ class Ticket(BaseModel):
         return f"{self.formatted_number} - {self.title}"
 
 
+class Message(BaseModel):
+    ticket = models.ForeignKey(
+        "tickets.Ticket",
+        on_delete=models.CASCADE,
+        related_name="messages",
+        verbose_name="Ticket",
+    )
+    author = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="ticket_messages",
+        verbose_name="Autor"
+    )
+    message = models.TextField(verbose_name="Mensagem")
+    is_edited = models.BooleanField("Editada", default=False)
+    reply = models.ForeignKey(
+        "self",
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="messages_reply",
+        verbose_name="Em resposta a",
+    )
+
+    class Meta:
+        verbose_name = "Mensagem"
+        verbose_name_plural = "Mensagens"
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"Message | {self.author} | {self.ticket.formatted_number}"
+
+
 class TicketColumnTransition(BaseModel):
     ticket = models.ForeignKey(
         "tickets.Ticket",
