@@ -79,3 +79,26 @@ class TestUserMeView:
         assert response.data["nickname"] == "new_nick"
         user.refresh_from_db()
         assert user.nickname == "new_nick"
+
+
+@pytest.mark.django_db
+class TestUserListView:
+    url = reverse("user_list")
+
+    def test_list_users_unauthenticated_fails(self, api_client):
+        response = api_client.get(self.url)
+        assert response.status_code == status.HTTP_401_UNAUTHORIZED
+
+    def test_list_users_paginated_success(self, auth_client, user):
+        response = auth_client.get(self.url)
+
+        assert response.status_code == status.HTTP_200_OK
+        assert "results" in response.data
+        assert len(response.data["results"]) >= 1
+
+    def test_filter_users_by_search(self, auth_client, user):
+        response = auth_client.get(f"{self.url}?search={user.username}")
+
+        assert response.status_code == status.HTTP_200_OK
+        assert len(response.data["results"]) == 1
+        assert response.data["results"][0]["username"] == user.username
