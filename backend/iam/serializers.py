@@ -34,7 +34,7 @@ class LoginSerializer(serializers.Serializer):
         identifier = attrs.get('identifier')
         password = attrs.get('password')
 
-        user = User.objects.filter(email=identifier).first() or User.objects.filter(email=identifier).first()
+        user = User.objects.filter(email=identifier).first() or User.objects.filter(username=identifier).first()
 
         if user and user.check_password(password):
             if not user.is_active:
