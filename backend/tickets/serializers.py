@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from tickets.models import Column, Board, Ticket, TicketColumnTransition
+from tickets.models import Column, Board, Ticket, Message, TicketColumnTransition
 from iam.models import User
 
 
@@ -45,6 +45,54 @@ class TicketShareSerializer(serializers.Serializer):
             )
 
         return value
+
+
+class MessageReplySummarySerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source='author.get_full_name', read_only=True, default=None)
+    author_username = serializers.CharField(source='author.username', read_only=True, default=None)
+
+    class Meta:
+        model = Message
+        fields = ['id', 'author', 'author_name', 'author_username', 'message', 'create_at']
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    author_name = serializers.CharField(source="author.get_full_name", read_only=True, default=None)
+    author_username = serializers.CharField(source="author.username", read_only=True)
+    reply_detail = MessageReplySummarySerializer(source="reply", read_only=True)
+
+    class Meta:
+        model = Message
+        fields = [
+            "id",
+            "ticket",
+            "author",
+            "author_name",
+            "author_username",
+            "message",
+            "is_edited",
+            "reply",
+            "reply_detail",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "author", "is_edited", "created_at", "updated_at"]
+
+    def validate(self, attrs):
+        ticket = attrs.get("ticket") or (self.instance.ticket if self.instance else None)
+        reply = attrs.get("reply")
+
+        if reply and ticket and reply.ticket_id != ticket.id:
+            raise serializers.ValidationError(
+                {"reply": "A mensagem respondida deve pertencer ao mesmo ticket."}
+            )
+        return attrs
+
+    def update(self, instance, validated_data):
+        new_message = validated_data.get("message", instance.message)
+        if new_message != instance.message:
+            instance.is_edited = True
+        return super().update(instance, validated_data)
 
 
 class TicketSerializer(serializers.ModelSerializer):
