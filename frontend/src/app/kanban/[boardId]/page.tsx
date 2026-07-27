@@ -1,4 +1,3 @@
-// src/app/kanban/[boardId]/page.tsx
 'use client';
 
 import React, { useState, useEffect, useCallback } from 'react';
