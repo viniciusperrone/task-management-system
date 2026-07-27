@@ -102,7 +102,7 @@ export default function LoginPage() {
             />
           </Box>
 
-          <Typography component="h1" variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+          <Typography component="h1" variant="h5" sx={{ mb: 1, fontWeight: 'bold' }}>
             Acessar
           </Typography>
 
@@ -143,18 +143,20 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
-              InputProps={{
-                endAdornment: (
+              slotProps={{
+                input: {
+                  endAdornment:  (
                   <InputAdornment position="end">
-                    <IconButton
-                      aria-label="toggle password visibility"
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  )
+                }
               }}
             />
 
@@ -177,8 +179,7 @@ export default function LoginPage() {
                     component="span"
                     variant="body2"
                     color="primary"
-                    fontWeight="bold"
-                    sx={{ '&:hover': { textDecoration: 'underline' } }}
+                    sx={{ '&:hover': { textDecoration: 'underline', fontWeight: 'bold' } }}
                   >
                     Cadastre-se
                   </Typography>

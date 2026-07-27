@@ -23,7 +23,6 @@ import {
 } from '@mui/icons-material';
 import { api } from '@/services/api';
 
-// Import da logo na pasta src/assets/
 import logoImg from '@/assets/logo.png';
 
 export default function RegisterPage() {
@@ -42,7 +41,6 @@ export default function RegisterPage() {
     e.preventDefault();
     setError(null);
 
-    // Validações básicas no Frontend
     if (!username || !email || !password || !confirmPassword) {
       setError('Por favor, preencha todos os campos.');
       return;
@@ -124,7 +122,7 @@ export default function RegisterPage() {
             />
           </Box>
 
-          <Typography component="h1" variant="h5" fontWeight="bold" sx={{ mb: 1 }}>
+          <Typography component="h1" variant="h5" sx={{ mb: 1, fontWeight: 'bold' }}>
             Criar Conta
           </Typography>
 
@@ -180,18 +178,20 @@ export default function RegisterPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               disabled={loading}
-              InputProps={{
-                endAdornment: (
-                  <InputAdornment position="end">
-                    <IconButton
-                      aria-label="alternar visibilidade da senha"
-                      onClick={() => setShowPassword(!showPassword)}
-                      edge="end"
-                    >
-                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                    </IconButton>
-                  </InputAdornment>
-                ),
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="alternar visibilidade da senha"
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
               }}
             />
 
@@ -228,8 +228,7 @@ export default function RegisterPage() {
                     component="span"
                     variant="body2"
                     color="primary"
-                    fontWeight="bold"
-                    sx={{ '&:hover': { textDecoration: 'underline' } }}
+                    sx={{ '&:hover': { textDecoration: 'underline', fontWeight: 'bold' } }}
                   >
                     Voltar para o Login
                   </Typography>
