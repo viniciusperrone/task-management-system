@@ -53,7 +53,7 @@ class MessageReplySummarySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Message
-        fields = ['id', 'author', 'author_name', 'author_username', 'message', 'create_at']
+        fields = ['id', 'author', 'author_name', 'author_username', 'message', 'created_at']
 
 
 class MessageSerializer(serializers.ModelSerializer):
