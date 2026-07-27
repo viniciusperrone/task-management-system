@@ -21,7 +21,7 @@ import {
   Visibility,
   VisibilityOff,
 } from '@mui/icons-material';
-import { api } from '@/services/api';
+import api from '@/services/api';
 
 import logoImg from '@/assets/logo.png';
 

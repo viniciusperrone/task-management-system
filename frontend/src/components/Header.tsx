@@ -16,14 +16,15 @@ import {
 import { ExitToApp as LogoutIcon } from "@mui/icons-material";
 
 import logoImg from "@/assets/logo.png";
+import { useAuth } from "@/context/AuthContext";
 
 interface HeaderProps {
   title: string;
-  username: string;
 }
 
-export default function Header({ title, username }: HeaderProps) {
+export default function Header({ title }: HeaderProps) {
   const router = useRouter();
+  const { user } = useAuth();
 
   const handleLogout = () => {
     Cookies.remove("access_token");
@@ -48,7 +49,6 @@ export default function Header({ title, username }: HeaderProps) {
           alignItems: "center",
         }}
       >
-        {/* Logo */}
         <Box
           sx={{
             display: "flex",
@@ -58,14 +58,13 @@ export default function Header({ title, username }: HeaderProps) {
         >
           <Image
             src={logoImg}
-            alt="Kanban Logo"
+            alt="Orizon Logo"
             width={60}
             height={40}
             style={{ objectFit: "contain" }}
           />
         </Box>
 
-        {/* Título */}
         <Typography
           variant="h6"
           sx={{
@@ -90,7 +89,7 @@ export default function Header({ title, username }: HeaderProps) {
               U
             </Avatar>
             <Typography variant="body2" sx={{ fontWeight: 500 }}>
-              {username}
+              {user?.username || user?.first_name}
             </Typography>
           </Box>
 

@@ -19,7 +19,7 @@ import {
   Visibility,
   VisibilityOff
 } from '@mui/icons-material';
-import { api } from '@/services/api';
+import api from '@/services/api';
 import Cookies from 'js-cookie';
 import Image from 'next/image';
 import logoImg from '@/assets/logo.png';
@@ -51,10 +51,13 @@ export default function LoginPage() {
         password: password,
       });
 
-      const { access, refresh } = response.data;
 
-      Cookies.set('access_token', access, { expires: 1 });
-      Cookies.set('refresh_token', refresh, { expires: 7 });
+      const { user, tokens } = response.data;
+
+      Cookies.set('access_token', tokens.access, { expires: 1 });
+      Cookies.set('refresh_token', tokens.refresh, { expires: 7 });
+
+      localStorage.setItem('user', JSON.stringify(user));
 
       router.push('/kanban');
     } catch (err: any) {
