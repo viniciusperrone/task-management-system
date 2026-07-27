@@ -134,7 +134,7 @@ export default function BoardsPage() {
 
     setIsSubmitting(true);
     try {
-      await api.post('/boards/', {
+      await api.post('/tickets/board/', {
         name: newBoardName,
         description: newBoardDesc,
         color: newBoardColor,
