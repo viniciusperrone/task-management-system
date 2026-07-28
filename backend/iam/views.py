@@ -1,3 +1,4 @@
+from django.contrib.auth.models import update_last_login
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import status, permissions, generics, filters
 from rest_framework.views import APIView
@@ -17,7 +18,6 @@ class RegisterView(APIView):
 
         if serializer.is_valid():
             user = serializer.save()
-
             refresh = RefreshToken.for_user(user)
 
             return Response({
@@ -39,6 +39,7 @@ class LoginView(APIView):
 
         if serializer.is_valid():
             user = serializer.validated_data['user']
+            update_last_login(None, user)
 
             refresh = RefreshToken.for_user(user)
 
