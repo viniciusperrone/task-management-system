@@ -97,7 +97,7 @@ export default function BoardDetailPage() {
   const [selectedColumnId, setSelectedColumnId] = useState<number | ''>('');
   const [newTitle, setNewTitle] = useState('');
   const [newDescription, setNewDescription] = useState('');
-  const [newPriority, setNewPriority] = useState<number>(30);
+  const [newPriority, setNewPriority] = useState<number>(11);
   const [newDueDate, setNewDueDate] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -191,8 +191,6 @@ export default function BoardDetailPage() {
   const userDisplayName = user
     ? user.first_name ? `${user.first_name} ${user.last_name}`.trim() : user.username
     : 'Usuário';
-
-  const avatarInitial = userDisplayName[0]?.toUpperCase() || 'U';
 
   return (
     <Box sx={{ height: '100vh', display: 'flex', flexDirection: 'column', bgcolor: 'background.default', overflow: 'hidden' }}>
@@ -301,6 +299,7 @@ export default function BoardDetailPage() {
                     <Card
                       key={ticket.id}
                       elevation={1}
+                      onClick={() => router.push(`/kanban/${boardId}/ticket/${ticket.id}`)}
                       sx={{
                         borderRadius: 1.5,
                         transition: 'box-shadow 0.2s',
