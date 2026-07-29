@@ -34,6 +34,7 @@ import {
 import api from '@/services/api';
 import { useAuth } from '@/context/AuthContext';
 import logoImg from '@/assets/logo.png';
+import Header from '@/components/Header';
 
 export interface UserOption {
   id: number;
@@ -143,42 +144,8 @@ export default function TicketDetailPage() {
 
   return (
     <Box sx={{ minHeight: '100vh', bgcolor: 'background.default', display: 'flex', flexDirection: 'column' }}>
-      <AppBar position="static" color="inherit" elevation={1} sx={{ borderBottom: 1, borderColor: 'divider' }}>
-        <Toolbar sx={{ justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Button
-              startIcon={<ArrowBackIcon />}
-              onClick={() => router.push(`/kanban/${boardId}`)}
-              color="inherit"
-              size="small"
-            >
-              Voltar ao Quadro
-            </Button>
-            <Divider orientation="vertical" flexItem />
-            <Image src={logoImg} alt="Kanban Logo" width={45} height={30} style={{ objectFit: 'contain' }} />
-            <Typography variant="h6" sx={{ fontWeight: 'bold' }}>
-              {ticket ? ticket.formatted_number : 'Carregando...'}
-            </Typography>
-          </Box>
+      <Header title={ticket?.title || 'Carregando...'}/>
 
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-              <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32 }}>
-                {avatarInitial}
-              </Avatar>
-              <Typography variant="body2" sx={{ fontWeight: 'medium' }}>
-                {userDisplayName}
-              </Typography>
-            </Box>
-
-            <Button variant="outlined" color="error" size="small" startIcon={<LogoutIcon />} onClick={logout}>
-              Sair
-            </Button>
-          </Box>
-        </Toolbar>
-      </AppBar>
-
-      {/* Conteúdo Central */}
       <Container maxWidth="md" sx={{ py: 4, flexGrow: 1 }}>
         {loading ? (
           <Box sx={{ display: 'flex', justifyContent: 'center', my: 8 }}>
